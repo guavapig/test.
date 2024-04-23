@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            font-size: 16px; /* 調整字體大小 */
+        }
+
+        #todoInputContainer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* 將內容和按鈕分開 */
+            margin-bottom: 10px;
+            width: 300px; /* 固定容器寬度 */
+        }
+
+        #todoInput {
+            flex: 1; /* 將輸入框的寬度設置為自適應 */
+            margin-right: 10px; /* 調整右邊距 */
+        }
+
+        #todoList {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            width: 300px; /* 固定代辦事項的寬度 */
+        }
+
+        #todoList li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around; /* 將內容和按鈕分開 */
+            height: 30px; /* 固定每行代辦事項的高度 */
+        }
+
+        #todoList li button {
+            font-size: 16px; /* 調整按鈕字體大小 */
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>代辦事項清單</h1>
+
+<!-- 表單用於添加新的代辦事項 -->
+<div id="todoInputContainer">
+    <input type="text" id="todoInput" placeholder="輸入代辦事項">
+    <button id="addBtn">添加</button>
+</div>
+
+<!-- 用於顯示代辦事項的列表 -->
+<ul id="todoList">
+</ul>
+
+<!-- 全部刪除按鈕 -->
+<button id="deleteAll">全部刪除</button>
+
+<script>
+    // 獲取需要的元素
+    const todoInput = document.getElementById('todoInput');
+    const todoList = document.getElementById('todoList');
+    const addBtn = document.getElementById('addBtn');
+    const deleteAllBtn = document.getElementById('deleteAll');
+    let editMode = false; // 用於標記是否處於編輯模式
+
+    // 添加代辦事項
+    addBtn.addEventListener('click', function() {
+        const todoText = todoInput.value.trim(); // 獲取輸入的文本，並去除首尾空格
+
+        if (editMode) { // 如果處於編輯模式
+            if (todoText !== '') { // 如果輸入不為空
+                const editedItem = document.querySelector('.editing'); // 找到正在編輯的項目
+                editedItem.querySelector('span').textContent = todoText; // 更新內容
+                editedItem.classList.remove('editing'); // 移除編輯樣式
+                editMode = false; // 退出編輯模式
+                addBtn.textContent = '添加'; // 恢復按鈕文本
+                todoInput.value = ''; // 清空輸入框
+            }
+        } else {
+            if (todoText !== '') { // 如果輸入不為空
+                const todoItem = document.createElement('li'); // 創建新的代辦事項項目
+
+                const todoContent = document.createElement('span'); // 創建代辦事項內容
+                todoContent.textContent = todoText; // 設置內容
+                todoItem.appendChild(todoContent); // 添加到項目中
+
+                const editBtn = document.createElement('button'); // 創建編輯按鈕
+                editBtn.textContent = '編輯'; // 設置按鈕文本
+                editBtn.addEventListener('click', function() { // 添加點擊事件
+                    todoInput.value = todoContent.textContent; // 將內容填充到輸入欄中
+                    addBtn.textContent = '編輯'; // 更改添加按鈕為編輯
+                    todoItem.classList.add('editing'); // 添加編輯樣式
+                    editMode = true; // 進入編輯模式
+                });
+                todoItem.appendChild(editBtn); // 添加編輯按鈕到項目中
+
+                const deleteBtn = document.createElement('button'); // 創建刪除按鈕
+                deleteBtn.textContent = '刪除'; // 設置按鈕文本
+                deleteBtn.addEventListener('click', function() { // 添加點擊事件
+                    todoItem.remove(); // 刪除該項目
+                });
+                todoItem.appendChild(deleteBtn); // 添加刪除按鈕到項目中
+
+                todoList.appendChild(todoItem); // 添加到列表中
+                todoInput.value = ''; // 清空輸入框
+            }
+        }
+    });
+
+    // 刪除所有代辦事項
+    deleteAllBtn.addEventListener('click', function() {
+        todoList.innerHTML = ''; // 清空列表
+    });
+</script>
+</body>
+</html>
